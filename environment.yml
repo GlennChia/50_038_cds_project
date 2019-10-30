@@ -1,0 +1,11 @@
+name: cds
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+  - python=3.7
+  - anaconda
+  - spacy
+  - gensim
+  - pyldavis
