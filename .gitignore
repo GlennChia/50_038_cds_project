@@ -2,3 +2,4 @@
 owentemple-ted-talks-complete-list
 .ipynb_checkpoints
 __pycache__
+*.sh

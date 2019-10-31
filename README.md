@@ -23,7 +23,7 @@ Objectives
 
 # Miscallaneous
 
-Useful Links
+### Useful Links
 1. https://www.searchtechnologies.com/blog/natural-language-processing-techniques
 2. https://www.searchtechnologies.com/nlp-project-feasibility-flowchart
 3. https://towardsdatascience.com/machine-learning-text-processing-1d5a2d638958
@@ -31,3 +31,23 @@ Useful Links
 5. https://www.todaysoftmag.com/article/2657/automatic-classification-of-documents-using-natural-language-processing
 6. https://www.kdnuggets.com/2015/01/text-analysis-101-document-classification.html
 7. https://towardsdatascience.com/machine-learning-nlp-text-classification-using-scikit-learn-python-and-nltk-c52b92a7c73a
+
+
+### Environment management
+
+First time use:
+```
+conda env create -f environment.yml
+```
+
+Updating existing environment
+```
+conda env update -f environment.yml
+```
+
+Then
+```
+conda activate cds
+```
+
+Add any additional packages needed by editing environment.yml
