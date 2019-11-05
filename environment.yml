@@ -9,3 +9,4 @@ dependencies:
   - spacy
   - gensim
   - pyldavis
+  - wordcloud
