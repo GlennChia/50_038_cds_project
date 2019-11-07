@@ -46,8 +46,10 @@ def lemitizeWords(text):
     words=token.tokenize(text)
     listLemma=[]
     for w in words:
-        x=lemma.lemmatize(w,'v')
+        x=lemma.lemmatize(w, 'v')
         listLemma.append(x)
+        
+    text=' '.join(listLemma)
     return text
 
 
@@ -153,7 +155,7 @@ source = ColumnDataSource(data=dict(index=index, ratio=ratio))
 
 p = figure(plot_height=400,
            plot_width=600,
-           title='Total % of tags to number of tags included')
+           title='Total tags counts covered when x number of tags are included')
 
 p.line(x='index', y='ratio',
        line_width=1.5,
@@ -349,6 +351,7 @@ max_char = 1000
 st.subheader('Sample data')
 sample_df = ted_talks[['speaker', 'duration', 'tags', 'transcript']][15:20]
 st.dataframe(sample_df)
+st.image('joanna_plot2.jpeg', width=300)
 
 st.subheader("Sample transcript")
 example_text = ted_talks['transcript'][input_row][:max_char]
@@ -362,10 +365,7 @@ st.subheader("Lemmatized transcript")
 lemma_text = ted_talks['lemmatized_transcript'][input_row][:max_char]
 st.write(lemma_text)
 
-st.subheader("Topics extracted from Non-negative Matrix Factorization(NMF)")
-st.write(["cds", "why"])
-
-st.title("Now lets try topic modelling with our own custom input")
+st.title("Now lets try predicting tag with our a custom input")
 st.subheader("Input text (Ctrl + Enter to Submit)")
 input_text = st.text_area("New transcript")
 
@@ -374,18 +374,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 
 if input_text:
-    clf = load('classifier_binary_relevance.joblib')
-    body = pd.Series(input_text)
-    cv = CountVectorizer().fit(body)
-    article = pd.DataFrame(cv.transform(body).todense(),columns=cv.get_feature_names())
-    tfidfart=TfidfTransformer().fit(article)
-    art=pd.DataFrame(tfidfart.transform(article).todense())
-    predictions = classifier.predict(art.astype(float))
-    st.write(predictions)
-    
-st.subheader("Topics extracted from Non-negative Matrix Factorization(NMF)")
-st.write(["cds", "why"])
-
-st.title("Multi-label classification will be demonstrated in slides.")
-
+    clf = load('gs_clf_svm.joblib')
+    sample_ls = [input_text]
+    sample_ls = np.array(sample_ls)
+    predicted_new = clf.predict(sample_ls)
+    st.write('Predicted tag')
+    st.write(predicted_new)
+    predicted_new = ''
 
