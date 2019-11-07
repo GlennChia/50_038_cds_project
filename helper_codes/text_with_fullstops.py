@@ -13,6 +13,9 @@ df = pd.read_csv('../owentemple-ted-talks-complete-list/{}'.format(file_name))
 df = df.dropna(subset=['transcript'])
 df = df.reset_index(drop=True)
 
+# There is a mispelt word that needs to be replaced
+df['transcript'] = df['transcript'].str.replace('childrn','children')
+
 df['transcript'] = df['transcript'].str.replace('\r',' ')
 df['transcript'] = df['transcript'].str.replace("\'s"," is")
 df['transcript'] = df['transcript'].str.replace("\'m"," am")
