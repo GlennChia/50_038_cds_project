@@ -14,12 +14,13 @@ df = df.dropna(subset=['transcript'])
 df = df.reset_index(drop=True)
 
 # There is a mispelt word that needs to be replaced
-df['transcript'] = df['transcript'].str.replace('childrn','children')
-
 df['transcript'] = df['transcript'].str.replace('\r',' ')
 df['transcript'] = df['transcript'].str.replace("\'s"," is")
 df['transcript'] = df['transcript'].str.replace("\'m"," am")
 df['transcript'] = df['transcript'].str.replace("\'ll"," will")
+df['transcript'] = df['transcript'].str.replace("Can\'t","cannot")
+df['transcript'] = df['transcript'].str.replace("Sha\'t","shall not")
+df['transcript'] = df['transcript'].str.replace("Won\'t","would not")
 df['transcript'] = df['transcript'].str.replace("n\'t"," not")
 df['transcript'] = df['transcript'].str.replace("\'ve"," have")
 df['transcript'] = df['transcript'].str.replace("\'re"," are")
@@ -28,11 +29,11 @@ df['transcript'] = df['transcript'].str.replace(r"\(([^)]+)\)","")
 # Deal with Mr. and Dr.
 df['transcript'] = df['transcript'].str.replace("mr.","mr")
 df['transcript'] = df['transcript'].str.replace("Mr.","mr")
-df['transcript'] = df['transcript'].str.replace("dr.","dr")
 df['transcript'] = df['transcript'].str.replace("mrs.","mrs")
 df['transcript'] = df['transcript'].str.replace("Mrs.","mrs")
 df['transcript'] = df['transcript'].str.replace("Dr.","dr")
-
+df['transcript'] = df['transcript'].str.replace("dr.","dr")
+df['transcript'] = df['transcript'].str.replace("childrn","children")
 df['transcript'] = df['transcript'].str.replace(r'\d+','')
 df['transcript'] = df['transcript'].str.replace(r'<.*?>','')
 for i in string.punctuation:
