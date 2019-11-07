@@ -39,6 +39,7 @@ def lemitizeWords(text):
     for w in words:
         x=lemma.lemmatize(w,'v')
         listLemma.append(x)
+    text = ' '.join(listLemma)
     return text
 
 
