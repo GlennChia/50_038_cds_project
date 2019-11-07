@@ -28,7 +28,7 @@ def stopWordsRemove(text):
     removedList=[x + ' ' for x in wordList if not x in stopWords]
     text=''.join(removedList)
     return text
-​
+    
 # There is a mispelt word that needs to be replaced
 df['transcript'] = df['transcript'].str.replace('childrn','children')
 
