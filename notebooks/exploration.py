@@ -27,71 +27,19 @@ stopWords = stopWordList + sklearnStopWords
 stopWords = list(dict.fromkeys(stopWords))
 # import gensim
 
-st.title('TranScribe')
+st.title('TagScriber')
 
 st.title("Visualizations")
 
-DATA_DIR = "../owentemple-ted-talks-complete-list"
 
-data = DATA_DIR + '/data/ted_talks_by_id_plus_transcripts_and_liwc_and_mft_plus_views.csv'
-
-def stopWordsRemove(text):
-    wordList=[x.lower().strip() for x in token.tokenize(text)]
-    removedList=[x + ' ' for x in wordList if not x in stopWords]
-    text=''.join(removedList)
-    return text
-
-
-def lemitizeWords(text):
-    words=token.tokenize(text)
-    listLemma=[]
-    for w in words:
-        x=lemma.lemmatize(w, 'v')
-        listLemma.append(x)
-        
-    text=' '.join(listLemma)
-    return text
+data = 'st_input.csv'
 
 
 @st.cache
 def load_data(filename):
     df = pd.read_csv(filename, index_col="id", parse_dates=['date_published'])
-    df = df.dropna(subset=['transcript'])
-    df['duration'] = pd.to_timedelta(df['duration'])
-    # There is a mispelt word that needs to be replaced
-    df['cleaned_transcript'] = df['transcript']
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace('\r',' ')
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("\'s"," is")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("\'m"," am")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("\'ll"," will")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("Can\'t","cannot")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("Sha\'t","shall not")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("Won\'t","would not")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("n\'t"," not")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("\'ve"," have")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("\'re"," are")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("\'d"," would")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace(r"\(([^)]+)\)","")
-    # Deal with Mr. and Dr.
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("mr. ","mr ")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("Mr. ","m ")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("mrs. ","mrs ")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("Mrs. ","mrs ")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("Dr. ","dr ")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace("dr. ","dr ")
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace(r'\d+','')
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace(r'<.*?>','')
-    for i in string.punctuation:
-        if i == "'":
-            df['cleaned_transcript'] = df['cleaned_transcript'].str.replace(i,'')
-        else:
-            df['cleaned_transcript'] = df['cleaned_transcript'].str.replace(i,' ')
-    df['cleaned_transcript'] = df['cleaned_transcript'].str.replace('\s+',' ')
     
-    df['lemmatized_transcript'] = df['cleaned_transcript']
-    df['lemmatized_transcript'] = df['lemmatized_transcript'].map(lambda com : stopWordsRemove(com))
-    df['lemmatized_transcript'] = df['lemmatized_transcript'].map(lambda com : lemitizeWords(com))
-    df['lemmatized_transcript'] = df['lemmatized_transcript'].str.replace('\s+',' ')
+    df['duration'] = pd.to_timedelta(df['duration'])
 
     return df
 
@@ -155,7 +103,7 @@ source = ColumnDataSource(data=dict(index=index, ratio=ratio))
 
 p = figure(plot_height=400,
            plot_width=600,
-           title='Total tags counts covered when x number of tags are included')
+           title='Total tags counts covered when n tags are included')
 
 p.line(x='index', y='ratio',
        line_width=1.5,
@@ -170,14 +118,14 @@ renderer = p.vbar(x='index', top='ratio',
                   source=source)
 
 p.xaxis.axis_label = 'Number of tags included'
-p.yaxis.axis_label = '% of total tags'
+p.yaxis.axis_label = '% of total tags counts'
 
 p.add_tools(HoverTool(tooltips=[("tag no.", "@index"), ("% of total tags", "@ratio")], renderers=[renderer]))
 
 st.bokeh_chart(p)
 
 
-st.subheader("Seems like there are some rarely used tags that can be pruned when training our model, possibly set a threshold before including tags in in our analysis")
+st.subheader("Seems like there are some rarely used tags that can be pruned when developing our model, we possibly set a threshold for including tags, excluding those with low frequencies")
 
 
 n_topics = st.slider('Number of topics', min_value=3, max_value=30, value=10, step=1)
@@ -239,9 +187,9 @@ p.add_tools(HoverTool(tooltips=[("n_tags", "@talks"), ("counts", "@counts")],
 
 st.bokeh_chart(p)
 
-st.subheader("When we do multi-label classification, we might only need to predict <20 classes")
+st.subheader("Most talks have less than 15 unique tags per talk.")
 
-st.subheader("Moving on to talk duration")
+st.subheader("As for talk duration..")
 
 duration_hist, edges = np.histogram(talk_time_minutes, bins=30)
 duration_data = pd.DataFrame({'n_talks': duration_hist,
@@ -267,10 +215,9 @@ p.add_tools(HoverTool(tooltips=[("num talks", "@n_talks"), ("duration", "@time_i
 
 st.bokeh_chart(p)
 
+st.subheader("As Expected, since ted talks are notorious for being strict with speaker's time, there is a clear drop point at around 20minutes")
 
-st.subheader("As Expected, ted talks are notorious for being strict with speaker's time, there is a sharp cutoff at 20min")
-
-# ## Lets see if talk duration is related the number of tags
+st.subheader("Let's see if talk duration is related the number of tags")
 
 source = ColumnDataSource(data=dict(tag_counts=tag_counts_per_talk, duration=talk_time_minutes))
 p = figure(plot_width=600, title='Number of tags to talk duration')
@@ -299,7 +246,7 @@ source = ColumnDataSource(data=word_data)
 p = figure(title='Histogram of word counts across transcripts',
            plot_width=600,
            x_axis_label='Number of words for transcripts',
-           y_axis_label='Number of Talks')
+           y_axis_label='Talk index')
 
 renderer = p.quad(bottom=0, top='n_talks',
                   left='left', right='right',
@@ -307,7 +254,7 @@ renderer = p.quad(bottom=0, top='n_talks',
 
 p.ygrid.grid_line_color = None
 
-p.add_tools(HoverTool(tooltips=[("num talks", "@n_talks"), ("n_words", "@left")],
+p.add_tools(HoverTool(tooltips=[("talks index", "@n_talks"), ("n_words", "@left")],
                       renderers=[renderer]))
 
 st.bokeh_chart(p)
@@ -345,11 +292,11 @@ st.bokeh_chart(p)
 
 st.title("Text Processing")
 
-input_row = 22
+input_row = 23
 max_char = 1000
 
 st.subheader('Sample data')
-sample_df = ted_talks[['speaker', 'duration', 'tags', 'transcript']][15:20]
+sample_df = ted_talks[['speaker', 'duration', 'tags', 'transcript']][20:25]
 st.dataframe(sample_df)
 st.image('joanna_plot2.jpeg', width=300)
 
@@ -365,7 +312,7 @@ st.subheader("Lemmatized transcript")
 lemma_text = ted_talks['lemmatized_transcript'][input_row][:max_char]
 st.write(lemma_text)
 
-st.title("Now lets try predicting tag with our a custom input")
+st.title("Now lets try predicting a tag with our a custom input using single label classification")
 st.subheader("Input text (Ctrl + Enter to Submit)")
 input_text = st.text_area("New transcript")
 
@@ -382,3 +329,4 @@ if input_text:
     st.write(predicted_new)
     predicted_new = ''
 
+st.title('To be Continued...')
