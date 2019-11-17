@@ -12,5 +12,8 @@ dependencies:
   - gensim
   - pyldavis
   - wordcloud
+  - python-snappy
+  - fastparquet
+  - pip
   - pip:
     - scikit-multilearn

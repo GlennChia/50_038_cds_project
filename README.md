@@ -56,3 +56,16 @@ conda activate cds
 ```
 
 Add any additional packages needed by editing environment.yml
+
+### Docker usage
+~ still working on it ~
+
+But can try:
+
+```
+docker build -t transcriber .
+```
+
+```
+docker run --rm -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v $(pwd):/home/jovyan/work transcriber
+```
