@@ -23,20 +23,6 @@ Objectives
 
 # Miscallaneous
 
-### Running streamlit app
-
-activate environment, then
-
-```
-pip install streamlit
-```
-
-```
-streamlit run <app.py>
-```
-
-https://streamlit.io/docs/
-
 ### Useful Links
 1. https://www.searchtechnologies.com/blog/natural-language-processing-techniques
 2. https://www.searchtechnologies.com/nlp-project-feasibility-flowchart
