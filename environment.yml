@@ -12,3 +12,5 @@ dependencies:
   - gensim
   - pyldavis
   - wordcloud
+  - pip:
+    - scikit-multilearn
