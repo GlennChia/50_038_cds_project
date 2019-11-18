@@ -23,20 +23,6 @@ Objectives
 
 # Miscallaneous
 
-### Running streamlit app
-
-activate environment, then
-
-```
-pip install streamlit
-```
-
-```
-streamlit run <app.py>
-```
-
-https://streamlit.io/docs/
-
 ### Useful Links
 1. https://www.searchtechnologies.com/blog/natural-language-processing-techniques
 2. https://www.searchtechnologies.com/nlp-project-feasibility-flowchart
@@ -46,6 +32,11 @@ https://streamlit.io/docs/
 6. https://www.kdnuggets.com/2015/01/text-analysis-101-document-classification.html
 7. https://towardsdatascience.com/machine-learning-nlp-text-classification-using-scikit-learn-python-and-nltk-c52b92a7c73a
 
+### Directory structure
+https://towardsdatascience.com/manage-your-data-science-project-structure-in-early-stage-95f91d4d0600
+
+Sample structure from above link
+![](sample_structure.png)
 
 ### Environment management
 
@@ -65,3 +56,16 @@ conda activate cds
 ```
 
 Add any additional packages needed by editing environment.yml
+
+### Docker usage
+~ still working on it ~
+
+But can try:
+
+```
+docker build -t transcriber .
+```
+
+```
+docker run --rm -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v $(pwd):/home/jovyan/work transcriber
+```
