@@ -1,6 +1,5 @@
 FROM jupyter/scipy-notebook
 
-#ADD environment.yml /tmp/environment.yml
 RUN conda install --quiet --yes \
     'spacy=2.2' \
     'gensim' \
@@ -8,10 +7,13 @@ RUN conda install --quiet --yes \
     'wordcloud' \
     'python-snappy' \
     'fastparquet' \
+    'inflect' \
     'pip'
 
-RUN pip install scikit-multilearn
+RUN pip install scikit-multilearn contractions
+
 
 
 #spaCy models, ntlk models etc
-# RUN 
+# RUN python -m spacy download en_core_web_sm
+# RUN python -m spacy download en
