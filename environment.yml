@@ -15,6 +15,7 @@ dependencies:
   - python-snappy
   - fastparquet
   - inflect
+  - keras
   - pip
   - pip:
     - scikit-multilearn
