@@ -1,47 +1,33 @@
-#!/usr/bin/env python
-# coding: utf-8
 import streamlit as st
-import json
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-import pprint
-import seaborn as sns
+
 from bokeh.io import output_notebook, show
 from bokeh.layouts import row, column
 from bokeh.plotting import figure
 from bokeh.models.tools import HoverTool
 from bokeh.models import ColumnDataSource, CustomJS
-import string
-from nltk.corpus import stopwords
-from nltk.tokenize import ToktokTokenizer
-from sklearn.feature_extraction import stop_words
-from nltk.stem.wordnet import WordNetLemmatizer
-
-sets=[stop_words.ENGLISH_STOP_WORDS]
-sklearnStopWords = [list(x) for x in sets][0]
-token=ToktokTokenizer()
-lemma=WordNetLemmatizer()
-stopWordList=stopwords.words('english')
-stopWords = stopWordList + sklearnStopWords
-stopWords = list(dict.fromkeys(stopWords))
-# import gensim
 
 st.title('TagScriber')
 
 st.title("Visualizations")
 
 
-data = 'st_input.csv'
+data = 'https://github.com/GlennChia/50_038_cds_project/blob/master/data/raw/TED_Talks_by_ID_plus-transcripts-and-LIWC-and-MFT-plus-views.csv'
 
 
 @st.cache
 def load_data(filename):
-    df = pd.read_csv(filename, index_col="id", parse_dates=['date_published'])
+    df = pd.read_parquet(filename)
     
     df['duration'] = pd.to_timedelta(df['duration'])
 
     return df
+
+
+@st.cache
+def load_models():
+    pass
 
 
 ted_talks = load_data(data)
@@ -62,7 +48,7 @@ tag_ratios = cumulative_tag_counts / sum(tag_counts)
 
 # process duration
 talk_time_minutes = ted_talks['duration'].dt.total_seconds() / 60
-word_count = ted_talks['transcript'].str.split().apply(len).value_counts()
+word_count = ted_talks['transcript'].str.split().str.len().value_counts()
 word_count = word_count.to_frame()
 word_count = word_count.reset_index()
 word_count = word_count.rename(columns={"index": "word_counts", 'transcript': "num_docs"})
@@ -304,29 +290,39 @@ st.subheader("Sample transcript")
 example_text = ted_talks['transcript'][input_row][:max_char]
 st.write(example_text)
 
-st.subheader("Cleaned transcript")
-cleaned_text = ted_talks['cleaned_transcript'][input_row][:max_char]
-st.write(cleaned_text)
+#st.subheader("Cleaned transcript")
+# # function to clean text
+# cleaned_text = ted_talks['cleaned_transcript'][input_row][:max_char]
+# st.write(cleaned_text)
 
-st.subheader("Lemmatized transcript")
-lemma_text = ted_talks['lemmatized_transcript'][input_row][:max_char]
-st.write(lemma_text)
+# st.subheader("Lemmatized transcript")
+# # function to lemmatize text
+# lemma_text = ted_talks['lemmatized_transcript'][input_row][:max_char]
+# st.write(lemma_text)
 
-st.title("Now lets try predicting a tag with our a custom input using single label classification")
-st.subheader("Input text (Ctrl + Enter to Submit)")
-input_text = st.text_area("New transcript")
+# st.title("Now lets try predicting a tag with our a custom input using single label classification")
+# st.subheader("Input text (Ctrl + Enter to Submit)")
+# input_text = st.text_area("New transcript")
 
-from joblib import dump, load
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
+# # Sentiment?
 
-if input_text:
-    clf = load('gs_clf_svm.joblib')
-    sample_ls = [input_text]
-    sample_ls = np.array(sample_ls)
-    predicted_new = clf.predict(sample_ls)
-    st.write('Predicted tag')
-    st.write(predicted_new)
-    predicted_new = ''
+# from joblib import dump, load
+# from sklearn.feature_extraction.text import CountVectorizer
+# from sklearn.feature_extraction.text import TfidfTransformer
+
+# if st.button("Submit"):
+#     clf = load('gs_clf_svm.joblib')
+#     sample_ls = [input_text]
+#     sample_ls = np.array(sample_ls)
+#     predicted_new = clf.predict(sample_ls)
+#     st.write('Predicted tag')
+#     st.write(predicted_new)
+#     predicted_new = ''
 
 st.title('To be Continued...')
+
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
