@@ -1,1 +1,6 @@
 streamlit
+bokeh
+pandas
+numpy
+#python-snappy
+#fastparquet
