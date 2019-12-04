@@ -17,7 +17,9 @@ dependencies:
   - inflect
   - keras
   - pip
+  - graphviz
   - pip:
     - scikit-multilearn
     - contractions
     - streamlit
+    - graphviz
